@@ -46,7 +46,19 @@ namespace ProductosApi.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            lock (_lock)
+            {
+                var p = _productos.FirstOrDefault(x => x.Id == id);
+                if (p is null)
+                    return NotFound(); 
 
+                _productos.Remove(p);
+                return NoContent();   
+            }
+        }
 
     }
 }
