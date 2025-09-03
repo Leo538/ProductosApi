@@ -17,6 +17,7 @@ namespace ProductosApi.Controllers
         private static int _nextId = 4;
         private static readonly object _lock = new();
 
+
         [HttpGet("{id:int}")]
         public ActionResult<Producto> GetById(int id)
         {
@@ -24,6 +25,27 @@ namespace ProductosApi.Controllers
             {
                 var p = _productos.FirstOrDefault(x => x.Id == id);
                 return p is null ? NotFound() : Ok(p);
+            }
+        }
+        [HttpGet]
+        public ActionResult<List<Producto>> GetAll()
+        {
+            lock (_lock)
+            {
+                var p = _productos;
+                return p;
+            }
+        }
+
+        [HttpPost]
+        public ActionResult<Producto> PostProducto(Producto producto)
+        {
+            lock (_lock)
+            {
+                producto.Id = _nextId;
+                _nextId++;
+                _productos.Add(producto);
+                return producto;
             }
         }
 
@@ -59,6 +81,5 @@ namespace ProductosApi.Controllers
                 return NoContent();   
             }
         }
-
     }
 }
