@@ -27,5 +27,26 @@ namespace ProductosApi.Controllers
             }
         }
 
+        [HttpPut("{id:int}")]
+        public IActionResult Update(int id, [FromBody] Producto actualizado)
+        {
+            var p = _productos.FirstOrDefault(x => x.Id == id);
+            if (p is null) return NotFound();
+
+            if (string.IsNullOrWhiteSpace(actualizado.Nombre))
+                return BadRequest("El nombre es obligatorio.");
+
+            if (actualizado.Precio < 0)
+                return BadRequest("El precio no puede ser negativo");
+
+            p.Nombre = actualizado.Nombre;
+            p.Precio = actualizado.Precio;
+            p.Disponible = actualizado.Disponible;
+
+            return NoContent();
+        }
+
+
+
     }
 }
