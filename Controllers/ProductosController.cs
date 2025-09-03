@@ -17,6 +17,7 @@ namespace ProductosApi.Controllers
         private static int _nextId = 4;
         private static readonly object _lock = new();
 
+        [HttpGet("{id:int}")]
         public ActionResult<Producto> GetById(int id)
         {
             lock (_lock)
