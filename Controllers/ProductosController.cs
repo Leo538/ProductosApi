@@ -35,5 +35,17 @@ namespace ProductosApi.Controllers
                 return p;
             }
         }
+
+        [HttpPost]
+        public ActionResult<Producto> PostProducto(Producto producto)
+        {
+            lock (_lock)
+            {
+                producto.Id = _nextId;
+                _nextId++;
+                _productos.Add(producto);
+                return producto;
+            }
+        }
     }
 }
