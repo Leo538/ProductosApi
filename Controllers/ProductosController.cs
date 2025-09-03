@@ -17,7 +17,8 @@ namespace ProductosApi.Controllers
         private static int _nextId = 4;
         private static readonly object _lock = new();
 
-        [HttpGet("{id}")]
+
+        [HttpGet("{id:int}")]
         public ActionResult<Producto> GetById(int id)
         {
             lock (_lock)
@@ -45,6 +46,39 @@ namespace ProductosApi.Controllers
                 _nextId++;
                 _productos.Add(producto);
                 return producto;
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public IActionResult Update(int id, [FromBody] Producto actualizado)
+        {
+            var p = _productos.FirstOrDefault(x => x.Id == id);
+            if (p is null) return NotFound();
+
+            if (string.IsNullOrWhiteSpace(actualizado.Nombre))
+                return BadRequest("El nombre es obligatorio.");
+
+            if (actualizado.Precio < 0)
+                return BadRequest("El precio no puede ser negativo");
+
+            p.Nombre = actualizado.Nombre;
+            p.Precio = actualizado.Precio;
+            p.Disponible = actualizado.Disponible;
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            lock (_lock)
+            {
+                var p = _productos.FirstOrDefault(x => x.Id == id);
+                if (p is null)
+                    return NotFound(); 
+
+                _productos.Remove(p);
+                return NoContent();   
             }
         }
     }
