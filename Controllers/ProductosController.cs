@@ -17,6 +17,7 @@ namespace ProductosApi.Controllers
         private static int _nextId = 4;
         private static readonly object _lock = new();
 
+        [HttpGet("{id}")]
         public ActionResult<Producto> GetById(int id)
         {
             lock (_lock)
@@ -25,6 +26,14 @@ namespace ProductosApi.Controllers
                 return p is null ? NotFound() : Ok(p);
             }
         }
-
+        [HttpGet]
+        public ActionResult<List<Producto>> GetAll()
+        {
+            lock (_lock)
+            {
+                var p = _productos;
+                return p;
+            }
+        }
     }
 }
