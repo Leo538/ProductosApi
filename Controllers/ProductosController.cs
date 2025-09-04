@@ -60,6 +60,29 @@ namespace ProductosApi.Controllers
         [HttpPost]
         public IActionResult PostProducto(Producto producto)
         {
+            if (_productos.FirstOrDefault(x => x.Id == producto.Id) is not null)
+            {
+                return BadRequest(new
+                {
+                    message = "Error de insercion",
+                    error = "No se permite un Id repetido"
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(producto.Nombre))
+                return BadRequest(new
+                {
+                    message = "Error de inserción",
+                    error = "El nombre no puede estar vacío"
+                });
+
+            if (producto.Precio < 0)
+                return BadRequest(new
+                {
+                    message = "Error de inserción",
+                    error = "El precio no puede ser negativo"
+                });
+
             lock (_lock)
             {
                 try
