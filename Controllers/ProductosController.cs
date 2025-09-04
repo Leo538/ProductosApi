@@ -66,12 +66,27 @@ namespace ProductosApi.Controllers
                 var p = _productos.FirstOrDefault(x => x.Id == id);
                 if (p is null) return NotFound();
 
+                var before = new Producto
+                {
+                    Id = p.Id,
+                    Nombre = p.Nombre,
+                    Precio = p.Precio,
+                    Disponible = p.Disponible
+                };
+
                 p.Nombre = actualizado.Nombre;
                 p.Precio = actualizado.Precio;
                 p.Disponible = actualizado.Disponible;
-            }
 
-            return NoContent();
+                var response = new
+                {
+                    message = "Producto actualizado correctamente",
+                    before,
+                    after = p
+                };
+
+                return Ok(response);
+            }
         }
 
         [HttpDelete("{id:int}")]
