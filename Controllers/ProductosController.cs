@@ -78,11 +78,17 @@ namespace ProductosApi.Controllers
                 p.Precio = actualizado.Precio;
                 p.Disponible = actualizado.Disponible;
 
+                var changedFields = new List<string>();
+                if (before.Nombre != p.Nombre) changedFields.Add(nameof(p.Nombre));
+                if (before.Precio != p.Precio) changedFields.Add(nameof(p.Precio));
+                if (before.Disponible != p.Disponible) changedFields.Add(nameof(p.Disponible));
+
                 var response = new
                 {
                     message = "Producto actualizado correctamente",
                     before,
-                    after = p
+                    after = p,
+                    changedFields
                 };
 
                 return Ok(response);
