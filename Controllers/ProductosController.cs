@@ -28,12 +28,23 @@ namespace ProductosApi.Controllers
         public ActionResult<Producto> GetById(int id)
         {
             if (id <= 0)
+            {
+                _logger.LogWarning("Solicitud inválida con id={Id}", id);
                 return BadRequest("El id debe ser mayor que 0.");
+            }
 
             lock (_lock)
             {
                 var p = _productos.FirstOrDefault(x => x.Id == id);
-                return p is null ? NotFound($"No se encontró un producto con Id={id}") : Ok(p);
+
+                if (p is null)
+                {
+                    _logger.LogInformation("No se encontró producto con id={Id}", id);
+                    return NotFound($"No se encontró un producto con Id={id}");
+                }
+
+                _logger.LogInformation("Producto con id={Id} encontrado", id);
+                return Ok(p);
             }
         }
         [HttpGet]
