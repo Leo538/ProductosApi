@@ -58,14 +58,52 @@ namespace ProductosApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Producto> PostProducto(Producto producto)
+        public IActionResult PostProducto(Producto producto)
         {
+            if (_productos.FirstOrDefault(x => x.Id == producto.Id) is not null)
+            {
+                return BadRequest(new
+                {
+                    message = "Error de insercion",
+                    error = "No se permite un Id repetido"
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(producto.Nombre))
+                return BadRequest(new
+                {
+                    message = "Error de inserción",
+                    error = "El nombre no puede estar vacío"
+                });
+
+            if (producto.Precio < 0)
+                return BadRequest(new
+                {
+                    message = "Error de inserción",
+                    error = "El precio no puede ser negativo"
+                });
+
             lock (_lock)
             {
-                producto.Id = _nextId;
-                _nextId++;
-                _productos.Add(producto);
-                return producto;
+                try
+                {
+                    producto.Id = _nextId;
+                    _nextId++;
+                    _productos.Add(producto);
+                }
+                catch (System.Exception e)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Error inesperado",
+                        error = e.Message
+                    });
+                }
+                return Ok(new
+                {
+                    message = "Producto ingresado correctamente",
+                    product = producto,
+                });
             }
         }
 
@@ -122,10 +160,10 @@ namespace ProductosApi.Controllers
             {
                 var p = _productos.FirstOrDefault(x => x.Id == id);
                 if (p is null)
-                    return NotFound(); 
+                    return NotFound();
 
                 _productos.Remove(p);
-                return NoContent();   
+                return NoContent();
             }
         }
     }
