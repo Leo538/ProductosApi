@@ -21,10 +21,13 @@ namespace ProductosApi.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<Producto> GetById(int id)
         {
+            if (id <= 0)
+                return BadRequest("El id debe ser mayor que 0.");
+
             lock (_lock)
             {
                 var p = _productos.FirstOrDefault(x => x.Id == id);
-                return p is null ? NotFound() : Ok(p);
+                return p is null ? NotFound($"No se encontró un producto con Id={id}") : Ok(p);
             }
         }
         [HttpGet]
