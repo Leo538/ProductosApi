@@ -58,14 +58,25 @@ namespace ProductosApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Producto> PostProducto(Producto producto)
+        public IActionResult PostProducto(Producto producto)
         {
             lock (_lock)
             {
-                producto.Id = _nextId;
-                _nextId++;
-                _productos.Add(producto);
-                return producto;
+                try
+                {
+                    producto.Id = _nextId;
+                    _nextId++;
+                    _productos.Add(producto);
+                }
+                catch (System.Exception e)
+                {
+
+                }
+                return Ok(new
+                {
+                    message = "Producto ingresado correctamente",
+                    product = producto,
+                });
             }
         }
 
@@ -122,10 +133,10 @@ namespace ProductosApi.Controllers
             {
                 var p = _productos.FirstOrDefault(x => x.Id == id);
                 if (p is null)
-                    return NotFound(); 
+                    return NotFound();
 
                 _productos.Remove(p);
-                return NoContent();   
+                return NoContent();
             }
         }
     }
