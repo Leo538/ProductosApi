@@ -17,6 +17,12 @@ namespace ProductosApi.Controllers
         private static int _nextId = 4;
         private static readonly object _lock = new();
 
+        private readonly ILogger<ProductosController> _logger;
+
+        public ProductosController(ILogger<ProductosController> logger)
+        {
+            _logger = logger;
+        }
 
         [HttpGet("{id:int}")]
         public ActionResult<Producto> GetById(int id)
