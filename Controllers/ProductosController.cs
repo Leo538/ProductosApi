@@ -70,7 +70,11 @@ namespace ProductosApi.Controllers
                 }
                 catch (System.Exception e)
                 {
-
+                    return BadRequest(new
+                    {
+                        message = "Error inesperado",
+                        error = e.Message
+                    });
                 }
                 return Ok(new
                 {
